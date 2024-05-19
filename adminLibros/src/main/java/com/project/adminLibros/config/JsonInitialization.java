@@ -4,6 +4,7 @@ import com.project.adminLibros.models.Book;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,6 +35,12 @@ public class JsonInitialization {
 
                 books.add(
                         new Book(
+                                "The Catcher in the Rye",
+                                "J.D. Salinger",
+                                new Date(1)));
+
+                books.add(
+                        new Book(
                                 "Harry Potter",
                                 "J.K. Rowling",
                                 new Date(-784512000000L)));
@@ -43,11 +50,7 @@ public class JsonInitialization {
                                 "The Great Gatsby",
                                 "F. Scott Fitzgerald",
                                 new Date(-784512000000L)));
-                books.add(
-                        new Book(
-                                "Pinocho",
-                                "Arturo Valdez",
-                                new Date(-784512000000L)));
+
                 books.add(
                         new Book(
                                 "To Kill a Mockingbird",
@@ -60,7 +63,6 @@ public class JsonInitialization {
                                 new Date(-784512000000L)));
 
                 objectMapper.writeValue(file, books);
-                // objectMapper.writeValue(file, new ArrayList<>());
             }
 
         } catch (IOException e) {

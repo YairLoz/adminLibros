@@ -17,10 +17,19 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-		<!-- <dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency> -->
+		</dependency>
+
+		<!--  Json Web Token  -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -46,18 +55,28 @@
     		<version>2.17.1</version>
 		</dependency>
 
+
+		<!-- model mapper -->
+		<dependency>
+  			<groupId>org.modelmapper</groupId>
+  			<artifactId>modelmapper</artifactId>
+  			<version>3.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 
-		<!-- <dependency>
+		<dependency>
      		<groupId>org.springframework.security</groupId>
      		<artifactId>spring-security-test</artifactId>
      		<scope>test</scope>
-    	</dependency> -->
+    	</dependency>
+
+		
+	
 
 	</dependencies>
 

@@ -1,6 +1,5 @@
 package com.project.adminLibros.dao;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,8 +11,8 @@ public interface BookDao {
 
     Book createBook(Book book);
 
-    void updateBook(long id, Book book) throws IOException;
+    Book updateBook(long id, Book book);
 
-    void deleteBook(String id) throws IOException;
+    String deleteBook(String bookName, String author, Date releaseDate);
 
 }

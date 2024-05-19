@@ -1,11 +1,10 @@
 package com.project.adminLibros.models;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.Date;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.*;
 import lombok.*;
-import jakarta.validation.constraints.*;
 
 @Getter
 @Setter
@@ -15,18 +14,11 @@ public class Book {
 
     private Long id;
 
-    @NotBlank
-    @Size(min = 3, max = 75)
-    @Pattern(regexp = "^[\\p{L}ÁÉÍÓÚáéíóúñÑ ]*$", message = "Book name must not contain numbers, dots or at signs")
     @JsonProperty("book_name")
     private String bookName;
 
-    @NotBlank
-    @Size(min = 3, max = 75)
-    @Pattern(regexp = "^[\\p{L}ÁÉÍÓÚáéíóúñÑ ]*$", message = "Book name must not contain numbers, dots or at signs")
     private String author;
 
-    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
     @JsonProperty("release_date")
     private Date releaseDate;
@@ -42,7 +34,7 @@ public class Book {
     @JsonCreator
     public Book(@JsonProperty("book_name") String bookName, @JsonProperty("author") String author,
             @JsonProperty("release_date") Date releaseDate) {
-        this.id = UUID.randomUUID().getMostSignificantBits(); // System.currentTimeMillis();
+        this.id = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         this.bookName = bookName;
         this.author = author;
         this.releaseDate = releaseDate;

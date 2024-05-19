@@ -9,22 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
-
-// import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class BookDaoImp implements BookDao {
 
     private final String filePath = "adminLibros/books.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private StringUtil stringUtil = new StringUtil(); // Create an instance of StringUtil
+    private StringUtil stringUtil = new StringUtil();
 
+    @Override
     public List<Book> getAllBooks(String bookName, String author, Date releaseDate) {
 
         try {
@@ -45,17 +43,14 @@ public class BookDaoImp implements BookDao {
                         (author == null || stringUtil.normalizeString(book.getAuthor())
                                 .contains(stringUtil.normalizeString(author)))
                         &&
-                        // !no busca bien
                         (releaseDate == null || releaseDate.equals(book.getReleaseDate()))) {
-                    // System.out.println(releaseDate);
                     filteredBooks.add(book);
                 }
             }
 
             if (filteredBooks.size() == 0) {
-                throw new IOException("No se encontraron libros con los parametros ingresados");
+                return new ArrayList<>();
             }
-            ;
 
             return filteredBooks;
 
@@ -63,7 +58,6 @@ public class BookDaoImp implements BookDao {
             e.printStackTrace();
             return null;
         }
-
     }
 
     @Override
@@ -98,11 +92,11 @@ public class BookDaoImp implements BookDao {
     }
 
     @Override
-    public void updateBook(long id, Book book) throws IOException {
+    public Book updateBook(long id, Book book) {
+
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-
             File file = new File(filePath);
             if (!file.exists()) {
                 throw new IOException("No existe el archivo de libros");
@@ -115,41 +109,47 @@ public class BookDaoImp implements BookDao {
                 });
             }
 
-            // for (int i = 0; i < books.size(); i++) {
-            // if (books.get(i).getId().equals(id)) {
-            // books.set(i, book);
-            // break;
-            // }
-            // }
+            boolean updated = false;
 
             for (int i = 0; i < books.size(); i++) {
-                if (books.get(i).getId().equals(id)) {
-                    Book existingBook = books.get(i);
+                Book currentBook = books.get(i);
+                Long currentBookId = currentBook.getId();
+                if (currentBookId != null && currentBookId == id) {
                     if (book.getBookName() != null) {
-                        existingBook.setBookName(book.getBookName());
+                        currentBook.setBookName(book.getBookName());
                     }
                     if (book.getAuthor() != null) {
-                        existingBook.setAuthor(book.getAuthor());
+                        currentBook.setAuthor(book.getAuthor());
                     }
                     if (book.getReleaseDate() != null) {
-                        existingBook.setReleaseDate(book.getReleaseDate());
+                        currentBook.setReleaseDate(book.getReleaseDate());
                     }
-                    // Add more properties to update if needed
-                    books.set(i, existingBook);
+                    books.set(i, currentBook);
+                    updated = true;
                     break;
                 }
             }
 
+            if (!updated) {
+                return null;
+                // throw new NoSuchElementException();
+            }
+
             mapper.writeValue(file, books);
+
+            return book;
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw e;
+            return null;
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
     @Override
-    public void deleteBook(String id) throws IOException {
+    public String deleteBook(String bookName, String author, Date releaseDate) {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -166,18 +166,34 @@ public class BookDaoImp implements BookDao {
                 });
             }
 
+            boolean deleted = false;
+
             for (int i = 0; i < books.size(); i++) {
-                if (books.get(i).getId().equals(Long.parseLong(id))) {
+                Book currentBook = books.get(i);
+                if ((bookName == null || bookName.equals(currentBook.getBookName()))
+                        && (author == null || author.equals(currentBook.getAuthor()))
+                        && (releaseDate == null || releaseDate.equals(currentBook.getReleaseDate()))) {
                     books.remove(i);
+                    deleted = true;
                     break;
                 }
             }
 
+            if (!deleted) {
+                throw new NoSuchElementException();
+            }
+
             mapper.writeValue(file, books);
+
+            return "Libro eliminado exitosamente";
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw e;
+            return "No se pudo eliminar el libro";
+
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return "No se encontró el libro con el ID proporcionado";
         }
     }
 

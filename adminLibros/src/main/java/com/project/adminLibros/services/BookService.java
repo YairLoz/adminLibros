@@ -1,13 +1,17 @@
 package com.project.adminLibros.services;
 
+import com.project.adminLibros.DTO.BookDto;
 import com.project.adminLibros.dao.BookDao;
 import com.project.adminLibros.models.Book;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper;
 
 @Service
 public class BookService {
@@ -15,19 +19,47 @@ public class BookService {
     @Autowired
     private BookDao bookDao;
 
-    public List<Book> getAllBooks(String bookName, String author, Date releaseDate) {
-        return bookDao.getAllBooks(bookName, author, releaseDate);
+    public List<BookDto> getAllBooks(String bookName, String author, Date releaseDate) {
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        return bookDao.getAllBooks(bookName, author, releaseDate).stream()
+                .map(book -> modelMapper.map(book, BookDto.class))
+                .collect(Collectors.toList());
+
     }
 
-    public Book createBook(Book body) {
-        return bookDao.createBook(body);
+    public BookDto createBook(BookDto bookDto) {
+
+        try {
+
+            ModelMapper modelMapper = new ModelMapper();
+            Book book = modelMapper.map(bookDto, Book.class);
+            this.bookDao.createBook(book);
+
+            return bookDto;
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("An error occurred while creating the book.");
+        }
     }
 
-    public void updateBook(long id, Book book) throws IOException {
-        bookDao.updateBook(id, book);
+    public BookDto updateBook(long id, BookDto bookDto) {
+
+        // try {
+
+        ModelMapper modelMapper = new ModelMapper();
+        Book book = modelMapper.map(bookDto, Book.class);
+        Book book2 = this.bookDao.updateBook(id, book);
+
+        if (book2 == null) {
+            return null;
+        }
+
+        return bookDto;
     }
 
-    public void deleteBook(String id) throws IOException {
-        bookDao.deleteBook(id);
+    public String deleteBook(String bookName, String author, Date releaseDate) {
+
+        return this.bookDao.deleteBook(bookName, author, releaseDate);
     }
 }
