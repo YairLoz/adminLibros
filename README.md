@@ -1,5 +1,5 @@
 # Poyecto Adminitrador Libros
-Este un proyecto de ejemplo que utiliza Spring Boot 3.2 y Maven para construir una aplicación web básica para la administración de libros, los datos se almacenan en un archivo JSON.
+Este un proyecto que utiliza Spring Boot 3.2 y Maven para construir una aplicación web básica para la administración de libros, los datos se almacenan en un archivo JSON.
 
 ## Requisitos previos
 - Java Development Kit (JDK) 17 o superior
